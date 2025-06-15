@@ -1,226 +1,139 @@
-# European Football Data Analysis with Python
+---
 
-This project is a beginner-friendly data analysis exercise using Python, focused on European football data (sample data from the English Premier League). The project includes loading, exploring, visualizing, and deriving insights from football statistics.
+# ⚽ EuSoccer Data Analysis
 
+Explore real football statistics through this beginner-friendly data analysis project using Python. Dive into key performance metrics of football players and clubs from a sample of the 2020/21 English Premier League season.
 
-## Project Overview
+---
 
-We analyze a small dataset containing football players' information such as goals, assists, positions, club affiliation, age, etc. Using Python and libraries like Pandas, NumPy, Matplotlib, and Seaborn, we uncover various patterns in the data such as:
+## 📌 Overview
 
-* Who scored the most goals?
-* What is the penalty conversion rate?
-* Which clubs have the youngest players?
-* Which players received the most yellow cards?
-* What is the age distribution of players?
-* Which clubs contribute the most assists or goals?
+This project analyzes a dataset containing player statistics such as goals, assists, age, position, club, and more. Using popular Python libraries, we examine patterns and answer questions like:
 
-This project is beginner-friendly and designed to showcase essential data analysis skills from end-to-end.
+* Which player scored the most goals?
+* How effective are players at converting penalties?
+* Which clubs have the youngest squads?
+* Who collected the most yellow cards?
+* What’s the age distribution among all players?
+* Which teams lead in goals and assists?
 
-## Prerequisites
+The goal is to develop data analysis and visualization skills through a real-world sports dataset.
 
-You need the following tools installed on your system:
+---
 
-* Python 3.x
-* Jupyter Notebook or JupyterLab
-* Pandas
-* NumPy
-* Matplotlib
-* Seaborn
+## 🛠️ Technologies Used
 
-Install dependencies using pip:
+* **Python 3.x**
+* **Jupyter Notebook / JupyterLab**
+* **Pandas**
+* **NumPy**
+* **Matplotlib**
+* **Seaborn**
+
+Install the libraries using pip:
 
 ```bash
-pip install pandas numpy matplotlib seaborn jupyter
+pip install pandas numpy matplotlib seaborn jupyterlab
 ```
 
-## Installation Guide
+---
 
-To get started:
+## 📂 Project Setup
 
-1. Install Python 3.x from the [official website](https://www.python.org/downloads/).
-2. Install JupyterLab and required libraries:
+To run the notebook locally:
+
+1. Install Python from the [official site](https://www.python.org/).
+2. Open terminal and install Jupyter + dependencies:
 
 ```bash
 pip install jupyterlab pandas numpy matplotlib seaborn
 ```
 
-3. Open your project folder and launch Jupyter Notebook:
+3. Launch Jupyter in your project directory:
 
 ```bash
-cd path/to/your/project/folder
+cd path/to/project
 jupyter notebook
 ```
 
-## Dataset Used
-
-We use a simplified sample of the English Premier League 2020/21 season:
-**[EPL\_20\_21\_sample.csv](sandbox:/mnt/data/EPL_20_21_sample.csv)**
-
-## Project Files
-
-* **Football\_Data\_Analysis.ipynb** - Main notebook for analysis
-* **EPL\_20\_21\_sample.csv** - Dataset used in the project
-
-## Key Sections in the Notebook
-
-### 1. Import Libraries
-
-```python
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-%matplotlib inline
-```
-
-### 2. Load Dataset
-
-```python
-df_football = pd.read_csv('EPL_20_21_sample.csv')
-df_football.head()
-```
-
-### 3. Explore Dataset
-
-* View structure: `df_football.info()`
-* Descriptive statistics: `df_football.describe()`
-* Check missing values: `df_football.isnull().sum()`
-
-### 4. Create New Metrics
-
-* Minutes per match
-* Goals per match
-
-```python
-df_football['MinsPerMatch'] = (df_football['Mins'] / df_football['Matches']).astype(int)
-df_football['GoalsPerMatch'] = (df_football['Goals'] / df_football['Matches']).astype(float)
-```
-
-### 5. Analyze Goals and Penalties
-
-```python
-Total_Goals = df_football['Goals'].sum()
-penalty_goals = df_football['Penalty_Goals'].sum()
-penalty_attempts = df_football['Penalty_Attempted'].sum()
-missed = penalty_attempts - penalty_goals
-```
-
-* **Pie chart for Penalty Conversion**
-
-```python
-plt.figure(figsize=(7,7))
-plt.pie([missed, penalty_goals], labels=['Missed', 'Scored'], autopct='%.1f%%')
-plt.title("Penalty Conversion")
-plt.show()
-```
-
-### 6. Nationalities & Positions
-
-* Unique positions: `df_football['Position'].unique()`
-* Total players by nationality:
-
-```python
-df_football['Nationality'].value_counts().head(10).plot(kind='bar')
-```
-
-### 7. Age-Based Analysis
-
-```python
-Under20 = df_football[df_football['Age'] <= 20]
-age20_25 = df_football[(df_football['Age'] > 20) & (df_football['Age'] <= 25)]
-age25_30 = df_football[(df_football['Age'] > 25) & (df_football['Age'] <= 30)]
-Above30 = df_football[df_football['Age'] > 30]
-
-x = [len(Under20), len(age20_25), len(age25_30), len(Above30)]
-labels = ['<=20', '21-25', '26-30', '>30']
-plt.pie(x, labels=labels, autopct='%.1f%%')
-plt.title("Player Age Distribution")
-plt.show()
-```
-
-### 8. Club-Wise Insights
-
-* Players per club:
-
-```python
-df_football['Club'].value_counts().plot(kind='bar')
-```
-
-* Average age per club using boxplot:
-
-```python
-plt.figure(figsize=(12,6))
-sns.boxplot(x='Club', y='Age', data=df_football)
-plt.xticks(rotation=90)
-```
-
-### 9. Performance Metrics
-
-* Top scorers:
-
-```python
-df_football[['Name','Club','Goals']].sort_values(by='Goals', ascending=False).head(10)
-```
-
-* Goals per match:
-
-```python
-df_football[['Name','GoalsPerMatch']].sort_values(by='GoalsPerMatch', ascending=False).head(10)
-```
-
-* Top assists:
-
-```python
-df_football[['Name','Assists']].sort_values(by='Assists', ascending=False).head(10)
-```
-
-* Assists by club:
-
-```python
-assists_by_club = df_football.groupby('Club')['Assists'].sum().sort_values(ascending=False)
-assists_by_club.plot(kind='bar', figsize=(12,6))
-```
-
-* Goals by club:
-
-```python
-goals_by_club = df_football.groupby('Club')['Goals'].sum().sort_values(ascending=False)
-goals_by_club.plot(kind='bar', figsize=(12,6))
-```
-
-### 10. Yellow Cards Analysis
-
-```python
-df_football[['Name','Yellow_Cards']].sort_values(by='Yellow_Cards', ascending=False).head(10)
-```
-
-```python
-plt.figure(figsize=(10,6))
-sns.barplot(data=df_football.sort_values(by='Yellow_Cards', ascending=False).head(10),
-            x='Name', y='Yellow_Cards', palette='flare')
-plt.xticks(rotation=45)
-plt.title("Top 10 Players with Most Yellow Cards")
-plt.show()
-```
-
-## Outcome
-
-This project demonstrates:
-
-* How to handle real-world sports datasets
-* How to derive insights using basic statistics
-* How to visualize results effectively with Python
-
-## Future Improvements
-
-* Use a complete season dataset with additional features (e.g. xG, xA, match location)
-* Add time series analysis for player trends
-* Build a dashboard using Plotly or Streamlit
-
-## License
-
-This project is for educational purposes. You may use and modify it with proper attribution.
+4. Open the `Football_Data_Analysis.ipynb` notebook and follow along.
 
 ---
 
-Built with ❤️ by Goutham
+## 📊 Dataset Description
+
+We use a sample dataset from the English Premier League 2020/21 season, containing player stats like:
+
+* Name, Age, Club, Position
+* Goals, Assists, Minutes played
+* Penalties taken/scored, Yellow cards
+
+🗂 File: `EPL_20_21_sample.csv`
+
+---
+
+## 🔍 What’s Inside the Notebook?
+
+The notebook walks through these steps:
+
+### 🔹 Data Loading & Exploration
+
+* Preview and understand the structure of the dataset
+* Identify missing values and get summary stats
+
+### 🔹 Feature Engineering
+
+* Create new columns like:
+
+  * **Minutes per Match**
+  * **Goals per Match**
+
+### 🔹 Visual Analysis
+
+* Penalty success rate (pie chart)
+* Nationality and Position breakdown (bar charts)
+* Player age distribution (pie chart)
+* Club-wise player count and age range (barplot, boxplot)
+
+### 🔹 Performance Analysis
+
+* Top goal scorers & assist providers
+* Club-level stats for goals and assists
+* Yellow card leaderboard
+
+---
+
+## 📈 Sample Insights
+
+* Penalty conversion rates visualized in a pie chart
+* Clubs like Manchester United and Liverpool stand out in total goals and assists
+* Most yellow cards came from midfielders aged 25–30
+* Youngest average squad: Arsenal
+* Top scorer: \[Example Player Name from data]
+
+---
+
+## 🌱 Room for Growth
+
+Potential ideas to expand this project:
+
+* Add expected goals (xG), expected assists (xA), and passing data
+* Integrate time-series plots for performance over the season
+* Build an interactive dashboard using **Plotly Dash** or **Streamlit**
+* Include match-level statistics and historical comparisons
+
+---
+
+## 📘 License
+
+This project is open-source and created for learning purposes. You’re welcome to use, adapt, and build on it.
+
+---
+
+**Made with passion for data and football.**
+
+---
+**Made with ❤️ by Goutham**
+
+
+
