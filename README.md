@@ -1,139 +1,233 @@
 ---
 
-# ⚽ EuSoccer Data Analysis
+## ⚽ Premier League 2020–21 Data Exploration with Python
 
-Explore real football statistics through this beginner-friendly data analysis project using Python. Dive into key performance metrics of football players and clubs from a sample of the 2020/21 English Premier League season.
+### 👨‍💻 By Goutham
 
----
+### 🧠 Objective
 
-## 📌 Overview
-
-This project analyzes a dataset containing player statistics such as goals, assists, age, position, club, and more. Using popular Python libraries, we examine patterns and answer questions like:
-
-* Which player scored the most goals?
-* How effective are players at converting penalties?
-* Which clubs have the youngest squads?
-* Who collected the most yellow cards?
-* What’s the age distribution among all players?
-* Which teams lead in goals and assists?
-
-The goal is to develop data analysis and visualization skills through a real-world sports dataset.
+This project focuses on analyzing performance data from players in the 2020–2021 English Premier League (EPL) season. Using Python, we extract key performance indicators and visualize patterns related to scoring, discipline, age distribution, and club-level contributions.
 
 ---
 
-## 🛠️ Technologies Used
+### 📌 Tools Required
 
-* **Python 3.x**
-* **Jupyter Notebook / JupyterLab**
-* **Pandas**
-* **NumPy**
-* **Matplotlib**
-* **Seaborn**
+Ensure the following software and packages are installed:
 
-Install the libraries using pip:
+* Python ≥ 3.8
+* Jupyter Notebook or VS Code with Jupyter support
+* Python libraries:
+
+  * `pandas`
+  * `numpy`
+  * `matplotlib`
+  * `seaborn`
+
+---
+
+### 🛠️ Setup Guide
 
 ```bash
 pip install pandas numpy matplotlib seaborn jupyterlab
 ```
 
----
-
-## 📂 Project Setup
-
-To run the notebook locally:
-
-1. Install Python from the [official site](https://www.python.org/).
-2. Open terminal and install Jupyter + dependencies:
+Run the notebook using:
 
 ```bash
-pip install jupyterlab pandas numpy matplotlib seaborn
-```
-
-3. Launch Jupyter in your project directory:
-
-```bash
-cd path/to/project
 jupyter notebook
 ```
 
-4. Open the `Football_Data_Analysis.ipynb` notebook and follow along.
+Make sure the file `premier_league_2020_21.csv` is saved in your working directory.
 
 ---
 
-## 📊 Dataset Description
+## 🧾 Data Overview
 
-We use a sample dataset from the English Premier League 2020/21 season, containing player stats like:
+The dataset includes stats for players from the 2020–21 EPL season, such as:
 
-* Name, Age, Club, Position
-* Goals, Assists, Minutes played
-* Penalties taken/scored, Yellow cards
-
-🗂 File: `EPL_20_21_sample.csv`
-
----
-
-## 🔍 What’s Inside the Notebook?
-
-The notebook walks through these steps:
-
-### 🔹 Data Loading & Exploration
-
-* Preview and understand the structure of the dataset
-* Identify missing values and get summary stats
-
-### 🔹 Feature Engineering
-
-* Create new columns like:
-
-  * **Minutes per Match**
-  * **Goals per Match**
-
-### 🔹 Visual Analysis
-
-* Penalty success rate (pie chart)
-* Nationality and Position breakdown (bar charts)
-* Player age distribution (pie chart)
-* Club-wise player count and age range (barplot, boxplot)
-
-### 🔹 Performance Analysis
-
-* Top goal scorers & assist providers
-* Club-level stats for goals and assists
-* Yellow card leaderboard
+* Player names, age, and nationality
+* Club associations
+* Minutes played, goals, assists
+* Penalties attempted/conversions
+* Discipline (yellow/red cards)
 
 ---
 
-## 📈 Sample Insights
+## 🧹 Step-by-Step Analysis
 
-* Penalty conversion rates visualized in a pie chart
-* Clubs like Manchester United and Liverpool stand out in total goals and assists
-* Most yellow cards came from midfielders aged 25–30
-* Youngest average squad: Arsenal
-* Top scorer: \[Example Player Name from data]
+### 1️⃣ Load Packages and Dataset
 
----
+```python
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-## 🌱 Room for Growth
+%matplotlib inline
 
-Potential ideas to expand this project:
-
-* Add expected goals (xG), expected assists (xA), and passing data
-* Integrate time-series plots for performance over the season
-* Build an interactive dashboard using **Plotly Dash** or **Streamlit**
-* Include match-level statistics and historical comparisons
+df = pd.read_csv("premier_league_2020_21.csv")
+df.head()
+```
 
 ---
 
-## 📘 License
+### 2️⃣ Basic Exploration
 
-This project is open-source and created for learning purposes. You’re welcome to use, adapt, and build on it.
+```python
+df.info()
+df.describe()
+df.isnull().sum()
+```
 
 ---
 
-**Made with passion for data and football.**
+### 3️⃣ Feature Engineering
+
+```python
+df["MinutesPerGame"] = (df["Minutes"] / df["Appearances"]).astype(int)
+df["GoalsPerGame"] = (df["Goals"] / df["Appearances"]).round(2)
+```
 
 ---
-**Made with ❤️ by Goutham**
 
+### 4️⃣ Penalty Analysis
 
+```python
+total_goals = df["Goals"].sum()
+penalties_made = df["Penalties_Scored"].sum()
+penalties_attempted = df["Penalties_Taken"].sum()
+```
+
+#### 📊 Penalty Accuracy Pie Chart
+
+```python
+missed = penalties_attempted - penalties_made
+plt.figure(figsize=(8, 5))
+plt.pie([missed, penalties_made], labels=["Missed", "Scored"], colors=["red", "green"], autopct="%.1f%%")
+plt.title("Penalty Conversion Rate")
+plt.show()
+```
+
+---
+
+### 5️⃣ Player Position and Nationality
+
+```python
+df["Role"].unique()
+top_countries = df["Nationality"].value_counts().head(10)
+
+plt.figure(figsize=(10,5))
+sns.barplot(x=top_countries.index, y=top_countries.values, palette="flare")
+plt.title("Top Nationalities in EPL 20/21")
+plt.xticks(rotation=45)
+plt.show()
+```
+
+---
+
+### 6️⃣ Squad Size by Club
+
+```python
+top_squads = df["Team"].value_counts().nlargest(5)
+sns.barplot(x=top_squads.index, y=top_squads.values, palette="coolwarm")
+plt.title("Clubs with Largest Squads")
+plt.show()
+
+smallest_squads = df["Team"].value_counts().nsmallest(5)
+sns.barplot(x=smallest_squads.index, y=smallest_squads.values, palette="mako")
+plt.title("Clubs with Smallest Squads")
+plt.show()
+```
+
+---
+
+### 7️⃣ Age Distribution Analysis
+
+```python
+u20 = df[df["Age"] <= 20]
+b20_25 = df[(df["Age"] > 20) & (df["Age"] <= 25)]
+b25_30 = df[(df["Age"] > 25) & (df["Age"] <= 30)]
+o30 = df[df["Age"] > 30]
+
+age_groups = [len(u20), len(b20_25), len(b25_30), len(o30)]
+labels = ["≤20", "21–25", "26–30", "30+"]
+
+plt.pie(age_groups, labels=labels, autopct="%.1f%%", colors=sns.color_palette("pastel"))
+plt.title("Player Age Groups")
+plt.show()
+```
+
+---
+
+### 8️⃣ Age per Club (Boxplot)
+
+```python
+plt.figure(figsize=(14,6))
+sns.boxplot(data=df, x="Team", y="Age")
+plt.xticks(rotation=90)
+plt.title("Age Range by Club")
+plt.show()
+```
+
+---
+
+### 9️⃣ Club-Level Scoring & Assists
+
+```python
+# Assists by Club
+assists = df.groupby("Team")["Assists"].sum().sort_values(ascending=False)
+assists.plot(kind="bar", figsize=(12,6), color="skyblue", title="Total Assists per Club")
+plt.xticks(rotation=75)
+plt.show()
+
+# Goals by Club
+goals = df.groupby("Team")["Goals"].sum().sort_values(ascending=False)
+goals.plot(kind="bar", figsize=(12,6), color="salmon", title="Total Goals per Club")
+plt.xticks(rotation=75)
+plt.show()
+```
+
+---
+
+### 🔟 Top Performers
+
+```python
+# Most Goals
+df[['Name', 'Team', 'Goals']].sort_values(by='Goals', ascending=False).head(10)
+
+# Most Assists
+df[['Name', 'Team', 'Assists']].sort_values(by='Assists', ascending=False).head(10)
+
+# Most Efficient (Goals per Game)
+df[['Name', 'GoalsPerGame', 'Goals']].sort_values(by='GoalsPerGame', ascending=False).head(10)
+```
+
+---
+
+### 🟨 Most Yellow Cards
+
+```python
+top_yellow = df.sort_values(by="Yellow_Cards", ascending=False).head(10)
+
+plt.figure(figsize=(14,6))
+sns.barplot(data=top_yellow, x="Name", y="Yellow_Cards", color="gold")
+plt.title("Top 10 Players with Most Yellow Cards")
+plt.xticks(rotation=45)
+plt.show()
+```
+
+---
+
+## 📈 Summary
+
+This project demonstrates how football data can be transformed into performance insights using Python. From basic data exploration to advanced visualizations, we examined:
+
+* Penalty effectiveness
+* Age demographics
+* Club-based statistics
+* Top scorers, assisters, and discipline records
+
+### 👋 Made with Python by Goutham
+
+---
 
